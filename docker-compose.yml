@@ -105,8 +105,6 @@ services:
     build:
       context: ./frontend-service
       dockerfile: Dockerfile
-      args:
-        VITE_API_URL: ${VITE_API_URL}
     container_name: sneakerhead-frontend
     image: sneakerhead-frontend-service:latest
     restart: unless-stopped

@@ -6,8 +6,6 @@ WORKDIR /app
 COPY package*.json .
 RUN npm install --silent
 COPY . .
-ARG VITE_API_URL=/api/v1
-ENV VITE_API_URL=$VITE_API_URL
 RUN npm run build
 
 # ── Stage 2: runner ───────────────────────────────
