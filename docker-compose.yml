@@ -26,7 +26,7 @@ services:
       context: ./user-service
       dockerfile: Dockerfile
     container_name: sneakerhead-user-service
-    image: sneakerhead-user-service:latest
+    image: yaswanthreddy1602/sneakerhead-user-service:latest
     restart: unless-stopped
     environment:
       DATABASE_URL: ${USER_DATABASE_URL}
@@ -52,7 +52,7 @@ services:
       context: ./product-service
       dockerfile: Dockerfile
     container_name: sneakerhead-product-service
-    image: sneakerhead-product-service:latest
+    image: yaswanthreddy1602/sneakerhead-product-service:latest
     restart: unless-stopped
     environment:
       DATABASE_URL: ${PRODUCT_DATABASE_URL}
@@ -76,7 +76,7 @@ services:
       context: ./order-service
       dockerfile: Dockerfile
     container_name: sneakerhead-order-service
-    image: sneakerhead-order-service:latest
+    image: yaswanthreddy1602/sneakerhead-order-service:latest
     restart: unless-stopped
     environment:
       DATABASE_URL: ${ORDER_DATABASE_URL}
@@ -106,7 +106,7 @@ services:
       context: ./frontend-service
       dockerfile: Dockerfile
     container_name: sneakerhead-frontend
-    image: sneakerhead-frontend-service:latest
+    image: yaswanthreddy1602/sneakerhead-frontend:latest
     restart: unless-stopped
     depends_on:
       user-service:
