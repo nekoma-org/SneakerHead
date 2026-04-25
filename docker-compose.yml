@@ -1,21 +1,62 @@
-# sneakerhead/docker-compose.yml
+# sneakerhead/docker-compose.yml (separated databases)
 
 services:
 
-  postgres:
+  # ── Dedicated PostgreSQL for User Service ──────────
+  user-postgres:
     image: postgres:16-alpine
-    container_name: sneakerhead-postgres
+    container_name: sneakerhead-user-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${USER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${USER_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${USER_POSTGRES_DB}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init-db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh:ro
+      - user_postgres_data:/var/lib/postgresql/data
     networks:
       - sneakerhead-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      test: ["CMD-SHELL", "pg_isready -U ${USER_POSTGRES_USER} -d ${USER_POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Dedicated PostgreSQL for Product Service ───────
+  product-postgres:
+    image: postgres:16-alpine
+    container_name: sneakerhead-product-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${PRODUCT_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${PRODUCT_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${PRODUCT_POSTGRES_DB}
+    volumes:
+      - product_postgres_data:/var/lib/postgresql/data
+    networks:
+      - sneakerhead-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${PRODUCT_POSTGRES_USER} -d ${PRODUCT_POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ── Dedicated PostgreSQL for Order Service ─────────
+  order-postgres:
+    image: postgres:16-alpine
+    container_name: sneakerhead-order-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${ORDER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ORDER_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${ORDER_POSTGRES_DB}
+    volumes:
+      - order_postgres_data:/var/lib/postgresql/data
+    networks:
+      - sneakerhead-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${ORDER_POSTGRES_USER} -d ${ORDER_POSTGRES_DB}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -36,7 +77,7 @@ services:
       REFRESH_TOKEN_EXPIRE_DAYS: ${REFRESH_TOKEN_EXPIRE_DAYS}
       LOG_LEVEL: ${LOG_LEVEL}
     depends_on:
-      postgres:
+      user-postgres:
         condition: service_healthy
     networks:
       - sneakerhead-network
@@ -60,7 +101,7 @@ services:
       JWT_ALGORITHM: ${JWT_ALGORITHM}
       LOG_LEVEL: ${LOG_LEVEL}
     depends_on:
-      postgres:
+      product-postgres:
         condition: service_healthy
     networks:
       - sneakerhead-network
@@ -86,7 +127,7 @@ services:
       PRODUCT_SERVICE_URL: ${PRODUCT_SERVICE_URL}
       LOG_LEVEL: ${LOG_LEVEL}
     depends_on:
-      postgres:
+      order-postgres:
         condition: service_healthy
       user-service:
         condition: service_healthy
@@ -140,7 +181,11 @@ services:
       retries: 3
 
 volumes:
-  postgres_data:
+  user_postgres_data:
+    driver: local
+  product_postgres_data:
+    driver: local
+  order_postgres_data:
     driver: local
 
 networks:
