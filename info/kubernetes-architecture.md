@@ -1,4 +1,4 @@
-# SneakerHead — Kubernetes Architecture
+# SneakerHead â€” Kubernetes Architecture
 
 ## Overview
 
@@ -18,7 +18,7 @@ SneakerHead runs on Kubernetes with a **Helm umbrella chart** managed by **ArgoC
 
 ---
 
-## Workloads — sneakerhead-dev / sneakerhead-prod
+## Workloads â€” sneakerhead-dev / sneakerhead-prod
 
 | Workload | Kind | Replicas (dev) | Port | Docker Image |
 |---|---|---|---|---|
@@ -29,7 +29,7 @@ SneakerHead runs on Kubernetes with a **Helm umbrella chart** managed by **ArgoC
 | `user-postgres` | StatefulSet | 1 | 5432 | `postgres:16-alpine` |
 | `product-postgres` | StatefulSet | 1 | 5432 | `postgres:16-alpine` |
 | `order-postgres` | StatefulSet | 1 | 5432 | `postgres:16-alpine` |
-| `sneakerhead-gateway` | Gateway (kgateway/Envoy) | — | 80 | Envoy proxy |
+| `sneakerhead-gateway` | Gateway (kgateway/Envoy) | â€” | 80 | Envoy proxy |
 
 ### HPA (Horizontal Pod Autoscaler)
 | Service | Min | Max | CPU Target | Memory Target |
@@ -42,22 +42,22 @@ SneakerHead runs on Kubernetes with a **Helm umbrella chart** managed by **ArgoC
 
 ```
 SneakerHead-manifests/
-└── helm/
-    └── sneakerhead/                  ← Parent chart
-        ├── Chart.yaml
-        ├── values-dev.yaml           ← Dev image tags + config
-        ├── values-prod.yaml          ← Prod image tags + config
-        └── charts/
-            ├── frontend/             ← Deployment + Service + ConfigMap + HPA
-            ├── gateway/              ← Gateway + HTTPRoutes (kgateway/Envoy)
-            ├── user-service/         ← Deployment + Service + ConfigMap + Secret
-            ├── product-service/      ← Deployment + Service + ConfigMap + Secret
-            ├── order-service/        ← Deployment + Service + ConfigMap + Secret
-            ├── user-postgres/        ← StatefulSet + Service + ConfigMap + Secret + PVC
-            ├── product-postgres/     ← StatefulSet + Service + ConfigMap + Secret + PVC
-            ├── order-postgres/       ← StatefulSet + Service + ConfigMap + Secret + PVC
-            ├── network-policies/     ← All NetworkPolicy resources
-            └── rbac/                 ← Role + RoleBinding
+â””â”€â”€ helm/
+    â””â”€â”€ sneakerhead/                  â† Parent chart
+        â”œâ”€â”€ Chart.yaml
+        â”œâ”€â”€ values-dev.yaml           â† Dev image tags + config
+        â”œâ”€â”€ values-prod.yaml          â† Prod image tags + config
+        â””â”€â”€ charts/
+            â”œâ”€â”€ frontend/             â† Deployment + Service + ConfigMap + HPA
+            â”œâ”€â”€ gateway/              â† Gateway + HTTPRoutes (kgateway/Envoy)
+            â”œâ”€â”€ user-service/         â† Deployment + Service + ConfigMap + Secret
+            â”œâ”€â”€ product-service/      â† Deployment + Service + ConfigMap + Secret
+            â”œâ”€â”€ order-service/        â† Deployment + Service + ConfigMap + Secret
+            â”œâ”€â”€ user-postgres/        â† StatefulSet + Service + ConfigMap + Secret + PVC
+            â”œâ”€â”€ product-postgres/     â† StatefulSet + Service + ConfigMap + Secret + PVC
+            â”œâ”€â”€ order-postgres/       â† StatefulSet + Service + ConfigMap + Secret + PVC
+            â”œâ”€â”€ network-policies/     â† All NetworkPolicy resources
+            â””â”€â”€ rbac/                 â† Role + RoleBinding
 ```
 
 ---
@@ -65,43 +65,43 @@ SneakerHead-manifests/
 ## ArgoCD App-of-Apps Structure
 
 ```
-sneakerhead-root   (Application — watches argocd/ dir, recurse: true)
+sneakerhead-root   (Application â€” watches argocd/ dir, recurse: true)
   syncPolicy: automated (selfHeal: true, prune: true)
-  source: SneakerHead-manifests → path: argocd/
-  │
-  ├── AppProjects (sneakerhead-infra, sneakerhead-data, sneakerhead-apps)
-  │
-  ├── WAVE 0 — Infrastructure (network policies + RBAC)
-  │   ├── sneakerhead-network-policies-dev   (infra/network-policies-dev.yaml)
-  │   ├── sneakerhead-network-policies-prod  (infra/network-policies-prod.yaml)
-  │   ├── sneakerhead-rbac-dev               (infra/rbac-dev.yaml)
-  │   └── sneakerhead-rbac-prod              (infra/rbac-prod.yaml)
-  │
-  ├── WAVE 1 — Databases (PostgreSQL StatefulSets — always manual sync)
-  │   ├── sneakerhead-user-postgres-dev      (databases/user-postgres-dev.yaml)
-  │   ├── sneakerhead-product-postgres-dev   (databases/product-postgres-dev.yaml)
-  │   ├── sneakerhead-order-postgres-dev     (databases/order-postgres-dev.yaml)
-  │   ├── sneakerhead-user-postgres-prod     (databases/user-postgres-prod.yaml)
-  │   ├── sneakerhead-product-postgres-prod  (databases/product-postgres-prod.yaml)
-  │   └── sneakerhead-order-postgres-prod    (databases/order-postgres-prod.yaml)
-  │
-  └── WAVE 2 — Microservices (via ApplicationSet)
+  source: SneakerHead-manifests â†’ path: argocd/
+  â”‚
+  â”œâ”€â”€ AppProjects (sneakerhead-infra, sneakerhead-data, sneakerhead-apps)
+  â”‚
+  â”œâ”€â”€ WAVE 0 â€” Infrastructure (network policies + RBAC)
+  â”‚   â”œâ”€â”€ sneakerhead-network-policies-dev   (infra/network-policies-dev.yaml)
+  â”‚   â”œâ”€â”€ sneakerhead-network-policies-prod  (infra/network-policies-prod.yaml)
+  â”‚   â”œâ”€â”€ sneakerhead-rbac-dev               (infra/rbac-dev.yaml)
+  â”‚   â””â”€â”€ sneakerhead-rbac-prod              (infra/rbac-prod.yaml)
+  â”‚
+  â”œâ”€â”€ WAVE 1 â€” Databases (PostgreSQL StatefulSets â€” always manual sync)
+  â”‚   â”œâ”€â”€ sneakerhead-user-postgres-dev      (databases/user-postgres-dev.yaml)
+  â”‚   â”œâ”€â”€ sneakerhead-product-postgres-dev   (databases/product-postgres-dev.yaml)
+  â”‚   â”œâ”€â”€ sneakerhead-order-postgres-dev     (databases/order-postgres-dev.yaml)
+  â”‚   â”œâ”€â”€ sneakerhead-user-postgres-prod     (databases/user-postgres-prod.yaml)
+  â”‚   â”œâ”€â”€ sneakerhead-product-postgres-prod  (databases/product-postgres-prod.yaml)
+  â”‚   â””â”€â”€ sneakerhead-order-postgres-prod    (databases/order-postgres-prod.yaml)
+  â”‚
+  â””â”€â”€ WAVE 2 â€” Microservices (via ApplicationSet)
       ApplicationSet: sneakerhead-microservices
-      Generator: list  →  5 services × 2 envs = 10 Applications
-      │
-      ├── DEV (autoSync: true)
-      │   ├── sneakerhead-frontend-dev
-      │   ├── sneakerhead-gateway-dev
-      │   ├── sneakerhead-user-service-dev
-      │   ├── sneakerhead-product-service-dev
-      │   └── sneakerhead-order-service-dev
-      │
-      └── PROD (autoSync: false — manual approval)
-          ├── sneakerhead-frontend-prod
-          ├── sneakerhead-gateway-prod
-          ├── sneakerhead-user-service-prod
-          ├── sneakerhead-product-service-prod
-          └── sneakerhead-order-service-prod
+      Generator: list  â†’  5 services Ã— 2 envs = 10 Applications
+      â”‚
+      â”œâ”€â”€ DEV (autoSync: true)
+      â”‚   â”œâ”€â”€ sneakerhead-frontend-dev
+      â”‚   â”œâ”€â”€ sneakerhead-gateway-dev
+      â”‚   â”œâ”€â”€ sneakerhead-user-service-dev
+      â”‚   â”œâ”€â”€ sneakerhead-product-service-dev
+      â”‚   â””â”€â”€ sneakerhead-order-service-dev
+      â”‚
+      â””â”€â”€ PROD (autoSync: false â€” manual approval)
+          â”œâ”€â”€ sneakerhead-frontend-prod
+          â”œâ”€â”€ sneakerhead-gateway-prod
+          â”œâ”€â”€ sneakerhead-user-service-prod
+          â”œâ”€â”€ sneakerhead-product-service-prod
+          â””â”€â”€ sneakerhead-order-service-prod
 ```
 
 ---
@@ -120,31 +120,31 @@ sneakerhead-root   (Application — watches argocd/ dir, recurse: true)
 
 ```
 default-deny-all
-  → blocks ALL traffic by default
+  â†’ blocks ALL traffic by default
 
 gateway-netpol   (podSelector: app.kubernetes.io/name: sneakerhead-gateway)
   ingress: port 80 from anywhere (external)
-  egress:  → frontend:80
-            → tier:backend 8001,8002,8003
-            → kgateway-system:9977 (xDS config)
-            → 0.0.0.0/0:443,6443 (K8s API)
-            → DNS:53
+  egress:  â†’ frontend:80
+            â†’ tier:backend 8001,8002,8003
+            â†’ kgateway-system:9977 (xDS config)
+            â†’ 0.0.0.0/0:443,6443 (K8s API)
+            â†’ DNS:53
 
 frontend-netpol  (podSelector: tier: frontend)
   ingress: from gateway:80
-  egress:  → DNS:53
+  egress:  â†’ DNS:53
 
 backend-netpol   (podSelector: tier: backend)
   ingress: from gateway:8001,8002,8003
            from tier:backend:8001,8002,8003  (inter-service)
            from monitoring NS:8001,8002,8003 (Prometheus scraping)
-  egress:  → tier:data:5432
-            → tier:backend:8001,8002,8003
-            → DNS:53
+  egress:  â†’ tier:data:5432
+            â†’ tier:backend:8001,8002,8003
+            â†’ DNS:53
 
 data-netpol      (podSelector: tier: data)
   ingress: from tier:backend:5432
-  egress:  → DNS:53
+  egress:  â†’ DNS:53
 ```
 
 ---
@@ -161,63 +161,135 @@ data-netpol      (podSelector: tier: data)
 
 ## Eraser.io / Gamma.ai Diagram Script
 
-Paste into [Eraser.io](https://app.eraser.io) → New Diagram → Code mode:
+Paste into [Eraser.io](https://app.eraser.io) â†’ New Diagram â†’ Code mode:
 
 ```
 direction right
 
 Internet [icon: globe]
 
-group ArgoCD_ns [label: "argocd namespace"] {
-  root_app [label: "sneakerhead-root\n(App of Apps)\nwatches: argocd/ recurse:true"]
-  appset [label: "ApplicationSet\nsneakerhead-microservices\n5 services x 2 envs"]
+haproxy [label: "HAProxy\nExternal Load Balancer", icon: load-balancer, color: red]
+
+group ArgoCD_ns [label: "argocd namespace", color: purple] {
+  root_app [label: "sneakerhead-root\n(App of Apps)\nautomated + selfHeal + prune\nwatches: argocd/ recurse:true"]
+  wave0 [label: "Wave 0 - Infra\nNetworkPolicies + RBAC\nAppProjects"]
+  wave1 [label: "Wave 1 - Databases\n6x PostgreSQL StatefulSets\nmanual sync"]
+  appset [label: "Wave 2 - ApplicationSet\nsneakerhead-microservices\n5 services x 2 envs = 10 Apps"]
 }
 
-group ManifestRepo [label: "SneakerHead-manifests (Git)", color: gray] {
-  helm_values [label: "helm/sneakerhead/\nvalues-dev.yaml\nvalues-prod.yaml"]
+group ManifestRepo [label: "SneakerHead-manifests (GitHub)", color: gray] {
+  helm_vals [label: "helm/sneakerhead/\nvalues-dev.yaml\nvalues-prod.yaml"]
+  argocd_dir [label: "argocd/\ninfra/ databases/ apps/ appprojects/"]
 }
 
-group Dev [label: "sneakerhead-dev namespace", color: blue] {
-  gw_dev [label: "kgateway\nEnvoy :80"]
+group kgateway_ns [label: "kgateway-system namespace", color: orange] {
+  kgw_ctrl [label: "kgateway Controller\nGatewayClass: kgateway\nxDS port :9977"]
+}
 
-  group fe_tier [label: "Frontend"] {
-    fe [label: "frontend\nDeployment x2\n:80"]
-    fe_hpa [label: "HPA min2/max4"]
+group Dev [label: "sneakerhead-dev namespace - auto-sync", color: blue] {
+  gw_dev [label: "kgateway\nsneakerhead-gateway\nNodePort :31803\nHTTPRoute rules"]
+
+  group fe_dev [label: "Frontend Tier"] {
+    fe_d [label: "frontend-service\nDeployment x2 :80\nHPA min2/max10"]
   }
 
-  group be_tier [label: "Backend"] {
-    us [label: "user-service\nx2 :8001"]
-    ps [label: "product-service\nx2 :8002"]
-    os [label: "order-service\nx2 :8003"]
+  group be_dev_ns [label: "Backend Tier"] {
+    us_d [label: "user-service x1\n:8001 /api/v1/auth /users"]
+    ps_d [label: "product-service x1\n:8002 /api/v1/products"]
+    os_d [label: "order-service x1\n:8003 /api/v1/cart /orders"]
   }
 
-  group db_tier [label: "Data"] {
-    upg [label: "user-postgres\nStatefulSet :5432\nPVC 1Gi"]
-    ppg [label: "product-postgres\nStatefulSet :5432\nPVC 2Gi"]
-    opg [label: "order-postgres\nStatefulSet :5432\nPVC 1Gi"]
+  group db_dev [label: "Data Tier"] {
+    upg_d [label: "user-postgres\nStatefulSet PVC 4Gi\nDB: userdb"]
+    ppg_d [label: "product-postgres\nStatefulSet PVC 4Gi\nDB: productdb"]
+    opg_d [label: "order-postgres\nStatefulSet PVC 4Gi\nDB: orderdb"]
+  }
+}
+
+group Prod [label: "sneakerhead-prod namespace - MANUAL sync", color: green] {
+  gw_prod [label: "kgateway\nsneakerhead-gateway\nNodePort :32686\nHTTPRoute rules"]
+
+  group fe_prod [label: "Frontend Tier"] {
+    fe_p [label: "frontend-service\nDeployment x2 :80\nHPA min2/max10\nCPU 60% Mem 70%"]
+  }
+
+  group be_prod_ns [label: "Backend Tier"] {
+    us_p [label: "user-service x2\n:8001 /api/v1/auth /users"]
+    ps_p [label: "product-service x2\n:8002 /api/v1/products"]
+    os_p [label: "order-service x2\n:8003 /api/v1/cart /orders"]
+  }
+
+  group db_prod [label: "Data Tier"] {
+    upg_p [label: "user-postgres\nStatefulSet PVC 4Gi\nDB: userdb"]
+    ppg_p [label: "product-postgres\nStatefulSet PVC 4Gi\nDB: productdb"]
+    opg_p [label: "order-postgres\nStatefulSet PVC 4Gi\nDB: orderdb"]
   }
 }
 
 group Monitoring [label: "monitoring namespace", color: yellow] {
-  prom [label: "Prometheus"]
-  graf [label: "Grafana"]
+  prom [label: "Prometheus\nNodePort :32507"]
+  graf [label: "Grafana\nNodePort :31633"]
 }
 
-Internet > gw_dev: "HTTP :80"
-gw_dev > fe: ":80"
-gw_dev > us: ":8001"
-gw_dev > ps: ":8002"
-gw_dev > os: ":8003"
-os > us: "validate user"
-os > ps: "check stock"
-us > upg: "SQL :5432"
-ps > ppg: "SQL :5432"
-os > opg: "SQL :5432"
-prom > us: "scrape :8001"
-prom > ps: "scrape :8002"
-prom > os: "scrape :8003"
+nfs [label: "NFS Server\nnfs-client StorageClass\ndynamic provisioning", icon: database]
 
-ManifestRepo > root_app: "ArgoCD watches"
-root_app > appset: "creates"
-appset > Dev: "wave 2 — auto-sync"
+// Traffic routing
+Internet > haproxy: "HTTPS"
+haproxy > gw_dev: "dev.sneakerhead.rest"
+haproxy > gw_prod: "sneakerhead.rest"
+haproxy > root_app: "argocd.sneakerhead.rest"
+haproxy > graf: "grafana.sneakerhead.rest"
+haproxy > prom: "prometheus.sneakerhead.rest"
+
+// kgateway controller programs both gateways
+kgw_ctrl > gw_dev: "xDS :9977"
+kgw_ctrl > gw_prod: "xDS :9977"
+
+// Dev namespace routing
+gw_dev > fe_d: "/ :80"
+gw_dev > us_d: "/api/v1/auth /users :8001"
+gw_dev > ps_d: "/api/v1/products :8002"
+gw_dev > os_d: "/api/v1/cart /orders :8003"
+os_d > us_d: "validate user"
+os_d > ps_d: "check stock"
+us_d > upg_d: "SQL :5432"
+ps_d > ppg_d: "SQL :5432"
+os_d > opg_d: "SQL :5432"
+
+// Prod namespace routing
+gw_prod > fe_p: "/ :80"
+gw_prod > us_p: "/api/v1/auth /users :8001"
+gw_prod > ps_p: "/api/v1/products :8002"
+gw_prod > os_p: "/api/v1/cart /orders :8003"
+os_p > us_p: "validate user"
+os_p > ps_p: "check stock"
+us_p > upg_p: "SQL :5432"
+ps_p > ppg_p: "SQL :5432"
+os_p > opg_p: "SQL :5432"
+
+// Prometheus scraping (both envs)
+prom > us_d: "scrape :8001"
+prom > ps_d: "scrape :8002"
+prom > os_d: "scrape :8003"
+prom > us_p: "scrape :8001"
+prom > ps_p: "scrape :8002"
+prom > os_p: "scrape :8003"
+prom > graf: "metrics"
+
+// NFS persistent storage
+upg_d > nfs: "PVC 4Gi"
+ppg_d > nfs: "PVC 4Gi"
+opg_d > nfs: "PVC 4Gi"
+upg_p > nfs: "PVC 4Gi"
+ppg_p > nfs: "PVC 4Gi"
+opg_p > nfs: "PVC 4Gi"
+
+// GitOps ArgoCD flow
+argocd_dir > root_app: "ArgoCD watches (auto)"
+helm_vals > appset: "Helm values source"
+root_app > wave0: "sync-wave: 0"
+wave0 > wave1: "sync-wave: 1"
+wave1 > appset: "sync-wave: 2"
+appset > Dev: "5 apps - autoSync + selfHeal + prune"
+appset > Prod: "5 apps - MANUAL sync only"
 ```
